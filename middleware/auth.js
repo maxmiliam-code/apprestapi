@@ -43,6 +43,41 @@ exports.registrasi = function(req, res) {
     });
 };
 
+//controller untuk input mahasiswa
+exports.inputmahasiswa = function(req, res) {
+    var post = {
+        nim: req.body.nim,
+        nama: req.body.nama,
+        jurusan: req.body.jurusan,
+    }
+
+    var query = "SELECT nim FROM ?? WHERE ??=?";
+    var table = ["mahasiswa", "nim", post.nim];
+
+    query = mysql.format(query,table);
+
+    connection.query(query, function(error,rows){
+        if(error){
+            console.log(error);
+        }else{
+            if(rows.length == 0){
+                var query = "INSERT INTO ?? SET ?";
+                var table = ["mahasiswa"];
+                query = mysql.format(query,table);
+                connection.query(query, post, function(error, rows){
+                    if(error){
+                        console.log(error);
+                    }else{
+                        response.ok("Berhasil menambahkan data mahasiswa baru", res);
+                    }
+                });
+            }else{
+                response.ok("Mahasiswa sudah terdaftar!",res);
+            }
+        }
+    });
+};
+
 
 //controller untuk login
 exports.login = function (req,res){
